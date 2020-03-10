@@ -5,8 +5,8 @@
     <property name="width">1280</property>
     <child>
       <object id="main_notebook" class="ttk.Notebook">
-        <property name="height">720</property>
-        <property name="width">1280</property>
+        <property name="height">700</property>
+        <property name="width">700</property>
         <layout>
           <property name="column">0</property>
           <property name="propagate">True</property>
@@ -69,6 +69,7 @@
                       <property name="column">0</property>
                       <property name="propagate">False</property>
                       <property name="row">1</property>
+                      <property name="sticky">w</property>
                     </layout>
                   </object>
                 </child>
@@ -98,6 +99,7 @@
                       <property name="column">0</property>
                       <property name="propagate">False</property>
                       <property name="row">3</property>
+                      <property name="sticky">w</property>
                     </layout>
                   </object>
                 </child>
@@ -110,6 +112,84 @@
                       <property name="column">0</property>
                       <property name="propagate">True</property>
                       <property name="row">2</property>
+                      <property name="sticky">w</property>
+                    </layout>
+                  </object>
+                </child>
+                <child>
+                  <object id="image_canvas" class="tk.Canvas">
+                    <property name="background">black</property>
+                    <property name="height">250</property>
+                    <property name="relief">flat</property>
+                    <property name="width">250</property>
+                    <layout>
+                      <property name="column">0</property>
+                      <property name="pady">100</property>
+                      <property name="propagate">True</property>
+                      <property name="row">8</property>
+                      <property name="rowspan">10</property>
+                      <property name="sticky">ne</property>
+                    </layout>
+                  </object>
+                </child>
+                <child>
+                  <object id="sinogram_canvas" class="tk.Canvas">
+                    <property name="background">black</property>
+                    <property name="cursor">arrow</property>
+                    <property name="height">300</property>
+                    <property name="relief">flat</property>
+                    <property name="width">300</property>
+                    <layout>
+                      <property name="column">18</property>
+                      <property name="padx">60</property>
+                      <property name="propagate">True</property>
+                      <property name="row">1</property>
+                      <property name="rowspan">10</property>
+                      <property name="sticky">n</property>
+                    </layout>
+                  </object>
+                </child>
+                <child>
+                  <object id="recon_canvas" class="tk.Canvas">
+                    <property name="background">black</property>
+                    <property name="height">300</property>
+                    <property name="relief">flat</property>
+                    <property name="width">300</property>
+                    <layout>
+                      <property name="column">18</property>
+                      <property name="pady">200</property>
+                      <property name="propagate">True</property>
+                      <property name="row">9</property>
+                      <property name="rowspan">10</property>
+                      <property name="sticky">s</property>
+                    </layout>
+                  </object>
+                </child>
+                <child>
+                  <object id="Scale_1" class="ttk.Scale">
+                    <property name="from_">0</property>
+                    <property name="length">300</property>
+                    <property name="orient">horizontal</property>
+                    <property name="to">100</property>
+                    <layout>
+                      <property name="column">0</property>
+                      <property name="columnspan">2</property>
+                      <property name="propagate">True</property>
+                      <property name="row">8</property>
+                      <property name="sticky">nw</property>
+                    </layout>
+                  </object>
+                </child>
+                <child>
+                  <object id="progress_label" class="ttk.Label">
+                    <property name="anchor">w</property>
+                    <property name="font">TkTextFont</property>
+                    <property name="text" translatable="yes">Progress
+</property>
+                    <layout>
+                      <property name="column">0</property>
+                      <property name="propagate">True</property>
+                      <property name="row">7</property>
                       <property name="sticky">w</property>
                     </layout>
                   </object>

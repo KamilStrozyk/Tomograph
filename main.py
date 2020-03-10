@@ -13,7 +13,7 @@ class App:
 
         self.window = builder.get_object('main_window')
         self.window.title("Tomograph")
-        self.window.geometry('1280x720')
+        self.window.geometry('700x740')
 
         self.style = ThemedStyle(self.window)
         self.style.set_theme("winnative")
