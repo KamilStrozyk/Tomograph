@@ -42,6 +42,7 @@
                 </child>
                 <child>
                   <object id="run_button" class="ttk.Button">
+                    <property name="command">run</property>
                     <property name="text" translatable="yes">Run</property>
                     <layout>
                       <property name="column">0</property>
