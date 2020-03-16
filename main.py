@@ -14,6 +14,8 @@ from ttkthemes import ThemedStyle
 import pygubu
 from PIL import ImageTk, Image
 import os
+import radon
+import cv2  
 
 def addFile(self):
     print("XD")
@@ -22,6 +24,7 @@ def addFile(self):
 
 class App(pygubu.TkApplication):
     def __init__(self):
+        self.radon = radon.Radon()
         self.builder = builder = pygubu.Builder()
         builder.add_from_file('Interface.ui')
 
@@ -29,13 +32,13 @@ class App(pygubu.TkApplication):
         self.window.title("Tomograph")
         self.window.geometry('700x740')
         self._create_ui()
-        self.prepareCanvas()
+        self.prepare_canvas()
 
         self.style = ThemedStyle(self.window)
         self.style.set_theme("winnative")
         self.window.mainloop()
 
-    def prepareCanvas(self):
+    def prepare_canvas(self):
         self.image_canvas_container = self.builder.get_object('image_canvas')
         self.image_figure = fig = Figure(figsize=(3, 3), dpi=100)
         self.image_canvas = image_canvas = FigureCanvasTkAgg(
@@ -55,10 +58,10 @@ class App(pygubu.TkApplication):
             fig, master=self.recon_canvas_container)
         recon_canvas .get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
 
-    def addFile(self):
+    def add_file(self):
         filename = filedialog.askopenfilename(
             initialdir="/", title="Select file", filetypes=(("jpeg files", "*.jpg"), ("all files", "*.*")))
-        self.image = mpimg.imread(filename)
+        self.image = cv2.imread(filename,0)
         axim = self.image_figure.add_axes([0,0,1,1], anchor='SW')
         axim.imshow(self.image, aspect='auto',cmap='gray')
         axim.axis('off')
@@ -66,20 +69,20 @@ class App(pygubu.TkApplication):
         pass
 
     def run(self):
-        self.generateSinogram()
-        self.generateRecon()
+        self.generate_sinogram()
+        self.generate_recon()
         pass
 
-    def generateSinogram(self):
-        self.sinogram = self.image
+    def generate_sinogram(self):
+        self.sinogram = self.radon.radon_transform(self.image)
         axim = self.sinogram_figure.add_axes([0,0,1,1], anchor='SW')
         axim.imshow(self.sinogram, aspect='auto',cmap='gray')
         axim.axis('off')
         self.sinogram_canvas.draw()
         pass
 
-    def generateRecon(self):
-        self.recon = self.sinogram
+    def generate_recon(self):
+        self.recon = self.radon.inverse_radon_transform(self.sinogram)
         axim = self.recon_figure.add_axes([0,0,1,1], anchor='SW')
         axim.imshow(self.recon, aspect='auto',cmap='gray')
         axim.axis('off')
@@ -88,7 +91,7 @@ class App(pygubu.TkApplication):
 
     def _create_ui(self):
         callbacks = {
-            'addFile': self.addFile,
+            'addFile': self.add_file,
             'run': self.run,
         }
         self.builder.connect_callbacks(callbacks)

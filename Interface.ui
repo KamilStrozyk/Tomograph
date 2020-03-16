@@ -35,7 +35,7 @@
                       <property name="column">0</property>
                       <property name="ipadx">42</property>
                       <property name="propagate">True</property>
-                      <property name="row">5</property>
+                      <property name="row">6</property>
                       <property name="sticky">w</property>
                     </layout>
                   </object>
@@ -49,7 +49,7 @@
                       <property name="columnspan">2</property>
                       <property name="ipadx">42</property>
                       <property name="propagate">True</property>
-                      <property name="row">6</property>
+                      <property name="row">7</property>
                       <property name="sticky">w</property>
                     </layout>
                   </object>
@@ -127,9 +127,9 @@
                       <property name="column">0</property>
                       <property name="pady">100</property>
                       <property name="propagate">True</property>
-                      <property name="row">8</property>
+                      <property name="row">10</property>
                       <property name="rowspan">10</property>
-                      <property name="sticky">ne</property>
+                      <property name="sticky">n</property>
                     </layout>
                   </object>
                 </child>
@@ -176,8 +176,8 @@
                       <property name="column">0</property>
                       <property name="columnspan">2</property>
                       <property name="propagate">True</property>
-                      <property name="row">8</property>
-                      <property name="sticky">nw</property>
+                      <property name="row">9</property>
+                      <property name="sticky">w</property>
                     </layout>
                   </object>
                 </child>
@@ -190,7 +190,38 @@
                     <layout>
                       <property name="column">0</property>
                       <property name="propagate">True</property>
-                      <property name="row">7</property>
+                      <property name="row">9</property>
+                      <property name="sticky">nw</property>
+                    </layout>
+                  </object>
+                </child>
+                <child>
+                  <object id="span_spinbox" class="ttk.Spinbox">
+                    <property name="cursor">arrow</property>
+                    <property name="font">TkTextFont</property>
+                    <property name="from_">0</property>
+                    <property name="increment">1</property>
+                    <property name="justify">left</property>
+                    <property name="state">normal</property>
+                    <property name="to">10000</property>
+                    <property name="wrap">false</property>
+                    <layout>
+                      <property name="column">0</property>
+                      <property name="propagate">False</property>
+                      <property name="row">5</property>
+                      <property name="sticky">sw</property>
+                    </layout>
+                  </object>
+                </child>
+                <child>
+                  <object id="span_label" class="ttk.Label">
+                    <property name="anchor">w</property>
+                    <property name="font">TkTextFont</property>
+                    <property name="text" translatable="yes">Span</property>
+                    <layout>
+                      <property name="column">0</property>
+                      <property name="propagate">True</property>
+                      <property name="row">4</property>
                       <property name="sticky">w</property>
                     </layout>
                   </object>
