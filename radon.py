@@ -23,7 +23,7 @@ class Radon:
     def __init__(self):
         pass
 
-    def radon_transform(self, image: np.ndarray, sinogram: np.ndarray, alpha, emmiters_count, theta):
+    def radon_transform(self, image: np.ndarray, sinogram: np.ndarray, alpha, emmiters_count, theta, previous_sinograms):
         self.image = image
         alpha = (alpha * 2 * pi / 360)
         theta = (theta * 2 * pi / 360)
@@ -55,6 +55,7 @@ class Radon:
             except:
                 res = []
             angle += alpha
+            previous_sinograms.append(sinogram.copy())
     pass
 
     def bresenham_line(self, x1, y1, x2, y2, inverse, value):
@@ -123,19 +124,23 @@ class Radon:
 
     def pixel_value_if_exist(self, x, y):
         try:
-            res = self.image[x, y]
+            if x >=0 and y >=0:
+                res = self.image[x, y]
+            else:
+                res = 0
         except:
             res = 0
         return res
 
     def add_to_pixel_if_exist(self, x, y, value):
         try:
-            self.recon[x, y] += value
+            if x < self.image.shape[0] and y < self.image.shape[1] and x >=0 and y >=0:
+                self.recon[x, y] += value
         except:
             pass
         pass
 
-    def inverse_radon_transform(self, recon: np.ndarray, sinogram: np.ndarray, alpha, emmiters_count, theta):
+    def inverse_radon_transform(self, recon: np.ndarray, sinogram: np.ndarray, alpha, emmiters_count, theta, preious_recons):
         self.recon = recon
         image = self.image
         alpha = (alpha * 2 * pi / 360)
@@ -164,6 +169,7 @@ class Radon:
                 iterator += 1
             except:
                 iterator += 0
+            preious_recons.append(recon.copy())
             angle += alpha
 
     pass

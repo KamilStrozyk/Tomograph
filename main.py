@@ -30,6 +30,9 @@ class App(pygubu.TkApplication):
     def __init__(self):
         self.radon = radon.Radon()
         self.builder = builder = pygubu.Builder()
+        self.running = False
+        self.previous_sinograms = []
+        self.previous_recons = []
         builder.add_from_file('Interface.ui')
 
         self.window = builder.get_object('main_window')
@@ -37,10 +40,6 @@ class App(pygubu.TkApplication):
         self.window.geometry('700x740')
         self._create_ui()
         self.prepare_canvas()
-
-        self.alpha = 0.5
-        self.span = 90
-        self.emmiters_count = 75
 
         self.style = ThemedStyle(self.window)
         self.style.set_theme("winnative")
@@ -81,25 +80,33 @@ class App(pygubu.TkApplication):
         pass
 
     def run(self):
+        self.alpha = float(self.builder.get_object('alpha_spinbox').get())
+        self.span = int(self.builder.get_object('span_spinbox').get())
+        self.emmiters_count = int(
+            self.builder.get_object('emmiters_spinbox').get())
+        self.running = True
         self.generate_sinogram()
         self.generate_recon()
         pass
 
     def generate_sinogram(self):
+        self.previous_sinograms = []
+        self.previous_recons = []
         self.sinogram = np.zeros((int(360/self.alpha), self.emmiters_count))
-        axim = self.sinogram_figure.add_axes([0, 0, 1, 1], anchor='SW')
+        self.sin_axim = axim = self.sinogram_figure.add_axes(
+            [0, 0, 1, 1], anchor='SW')
         self.sin_thread = Thread(target=lambda: self.sinogram_thread())
         self.sin_thread.start()
         self.update_sinogram(axim)
         axim.imshow(self.sinogram, aspect='auto',
-                     cmap='gray')
+                    cmap='gray')
         axim.axis('off')
         self.sinogram_canvas.draw()
         pass
 
     def sinogram_thread(self):
         self.radon.radon_transform(
-            image=self.image, sinogram=self.sinogram, alpha=self.alpha, theta=self.span, emmiters_count=self.emmiters_count)
+            image=self.image, sinogram=self.sinogram, alpha=self.alpha, theta=self.span, emmiters_count=self.emmiters_count, previous_sinograms=self.previous_sinograms)
     pass
 
     def update_sinogram(self, axim):
@@ -111,7 +118,7 @@ class App(pygubu.TkApplication):
 
     def reconstruction_thread(self):
         self.radon.inverse_radon_transform(
-            recon=self.recon, sinogram=self.sinogram, alpha=self.alpha, theta=self.span, emmiters_count=self.emmiters_count)
+            recon=self.recon, sinogram=self.sinogram, alpha=self.alpha, theta=self.span, emmiters_count=self.emmiters_count, preious_recons=self.previous_recons)
     pass
 
     def update_recon(self, axim):
@@ -124,21 +131,42 @@ class App(pygubu.TkApplication):
     def generate_recon(self):
         row, col = self.image.shape
         self.recon = np.zeros((row, col))
-        axim = self.recon_figure.add_axes([0, 0, 1, 1], anchor='SW')
+        self.recon_axim = axim = self.recon_figure.add_axes(
+            [0, 0, 1, 1], anchor='SW')
         self.recon_thread = Thread(target=lambda: self.reconstruction_thread())
         self.recon_thread.start()
 
         self.update_recon(axim)
-        # time.sleep(10)
         axim.imshow(self.recon, aspect='auto', cmap='gray')
         axim.axis('off')
         self.recon_canvas.draw()
+        self.running = False
         pass
+
+    def slider(self, value):
+        if self.running == False:
+            # try:
+            self.window.after(10,self.change_image(value))
+            # except:
+            #     pass
+        pass
+    def change_image(self,value):
+            self.sinogram = self.previous_sinograms[int(
+                (len(self.previous_sinograms)-1) * float(value)/100)]
+            self.sin_axim.imshow(self.sinogram, aspect='auto', cmap='gray')
+            self.sinogram_canvas.draw()
+            self.recon_axim = self.recon_figure.add_axes(
+            [0, 0, 1, 1], anchor='SW')
+            self.recon = self.previous_recons[int(
+                (len(self.previous_recons)-1) * float(value)/100)]
+            self.recon_axim.imshow(self.recon, aspect='auto', cmap='gray')
+            self.recon_canvas.draw()
 
     def _create_ui(self):
         callbacks = {
             'addFile': self.add_file,
             'run': self.run,
+            'slider': self.slider
         }
         self.builder.connect_callbacks(callbacks)
 
