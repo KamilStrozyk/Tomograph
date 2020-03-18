@@ -23,35 +23,45 @@ class Radon:
     def __init__(self):
         pass
 
-    def radon_transform(self, image: np.ndarray, alpha=0.5, emmiters_count=10, theta=5):
+    def radon_transform(self, image: np.ndarray, sinogram: np.ndarray, alpha, emmiters_count, theta):
         self.image = image
+        alpha = (alpha * 2 * pi / 360)
+        theta = (theta * 2 * pi / 360)
         row, col = image.shape
         center = {"x": row//2, "y": col//2}
         corner = {"x": row, "y": col}
         r = sqrt((center["x"] - corner["x"])**2 +
                  (center["y"] - corner["y"])**2)
+        angle = 0
+        iterator = 0
+        while angle < 2*pi:
 
-        E = [int(r * cos(alpha)), int(r*sin(alpha))]
-        D = []
+            E = [row//2 + int(r * cos(angle)), col//2 + int(r*sin(angle))]
+            D = []
+            for i in range(emmiters_count):
+                if i == 0:
+                    x = r*cos(angle + pi - theta/2)
+                    y = r*sin(angle + pi - theta/2)
+                else:
+                    x = r*cos(angle + pi - theta/2 + i *
+                              theta/(emmiters_count-1))
+                    y = r*sin(angle + pi - theta/2 + i *
+                              theta/(emmiters_count-1))
+                D.append([row//2 + int(x), col//2 + int(y)])
+            res = []
+            for d in D:
+                values = self.bresenham_line(
+                    E[0], E[1], d[0], d[1], False, None)
+                res.append(sum(values)/len(values))
+            try:
+                sinogram[iterator] = res
+                iterator += 1
+            except:
+                res = []
+            angle += alpha
+    pass
 
-        for i in range(emmiters_count):
-            if i == 0:
-                x = r*cos(alpha + pi - theta/2)
-                y = r*sin(alpha + pi - theta/2)
-            elif i == emmiters_count-1:
-                x = r*cos(alpha + pi + theta/2)
-                y = r*sin(alpha + pi + theta/2)
-            else:
-                x = r*cos(alpha + pi - theta/2 + i * theta/(emmiters_count-1))
-                y = r*sin(alpha + pi - theta/2 + i * theta/(emmiters_count-1))
-            D.append([row//2 + int(x), col//2 + int(y)])
-
-        res = []
-        for d in D:
-            res.append(self.bresenham_line(E[0], E[1], d[0], d[1]))
-        return image
-
-    def bresenham_line(self, x1, y1, x2, y2):
+    def bresenham_line(self, x1, y1, x2, y2, inverse, value):
         coords = []
         x = x1
         y = y1
@@ -68,7 +78,10 @@ class Radon:
             yi = -1
             dy = y1 - y2
         # pierwszy piksel
-        coords.append(self.pixel_value_if_exist(x, y))
+        if inverse is False:
+            coords.append(self.pixel_value_if_exist(x, y))
+        else:
+            self.add_to_pixel_if_exist(x, y, value)
 
         if (dx > dy):
             ai = (dy - dx) * 2
@@ -82,8 +95,11 @@ class Radon:
                 else:
                     d += bi
                     x += xi
+            if inverse is False:
                 coords.append(
                     self.pixel_value_if_exist(x, y))
+            else:
+                self.add_to_pixel_if_exist(x, y, value)
 
         else:
 
@@ -101,9 +117,12 @@ class Radon:
 
                     d += bi
                     y += yi
-                coords.append(
-                    self.pixel_value_if_exist(x, y))
-        print(coords)
+
+                if inverse is False:
+                    coords.append(
+                        self.pixel_value_if_exist(x, y))
+                else:
+                    self.add_to_pixel_if_exist(x, y, value)
         return coords
 
     def pixel_value_if_exist(self, x, y):
@@ -113,5 +132,46 @@ class Radon:
             res = 0
         return res
 
-    def inverse_radon_transform(sinogram):
+    def add_to_pixel_if_exist(self, x, y, value):
+        try:
+            self.recon[x, y] += value
+        except:
+            pass
         pass
+
+    def inverse_radon_transform(self, recon: np.ndarray, sinogram: np.ndarray, alpha, emmiters_count, theta):
+        self.recon = recon
+        image = self.image
+        alpha = (alpha * 2 * pi / 360)
+        theta = (theta * 2 * pi / 360)
+        row, col = image.shape
+        center = {"x": row//2, "y": col//2}
+        corner = {"x": row, "y": col}
+        r = sqrt((center["x"] - corner["x"])**2 +
+                 (center["y"] - corner["y"])**2)
+        angle = 0
+        iterator = 0
+        while angle < 2*pi:
+           
+            E = [row//2 + int(r * cos(angle)), col//2 + int(r*sin(angle))]
+            D = []
+            for i in range(emmiters_count):
+                if i == 0:
+                    x = r*cos(angle + pi - theta/2)
+                    y = r*sin(angle + pi - theta/2)
+                else:
+                    x = r*cos(angle + pi - theta/2 + i *
+                                theta/(emmiters_count-1))
+                    y = r*sin(angle + pi - theta/2 + i *
+                              theta/(emmiters_count-1))
+                D.append([row//2 + int(x), col//2 + int(y)])
+            try:
+                for d in D:
+                    values = self.bresenham_line(
+                        E[0], E[1], d[0], d[1], True, sinogram[iterator, D.index(d)])
+                iterator += 1
+            except:
+                iterator +=0
+            angle += alpha
+
+    pass

@@ -15,7 +15,10 @@ import pygubu
 from PIL import ImageTk, Image
 import os
 import radon
-import cv2  
+import cv2
+import numpy as np
+from threading import Thread
+import time
 
 def addFile(self):
     print("XD")
@@ -34,26 +37,32 @@ class App(pygubu.TkApplication):
         self._create_ui()
         self.prepare_canvas()
 
+        self.alpha = 2
+        self.span = 90
+        self.emmiters_count = 100
+
         self.style = ThemedStyle(self.window)
         self.style.set_theme("winnative")
         self.window.mainloop()
 
+
     def prepare_canvas(self):
+
         self.image_canvas_container = self.builder.get_object('image_canvas')
-        self.image_figure = fig = Figure(figsize=(3, 3), dpi=100)
+        self.image_figure = fig = Figure(figsize=(3, 3), dpi=100,facecolor='black')
         self.image_canvas = image_canvas = FigureCanvasTkAgg(
             fig, master=self.image_canvas_container)
         image_canvas .get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
 
         self.sinogram_canvas_container = self.builder.get_object(
             'sinogram_canvas')
-        self.sinogram_figure = fig = Figure(figsize=(3, 3), dpi=100)
+        self.sinogram_figure = fig = Figure(figsize=(3, 3), dpi=100,facecolor='black')
         self.sinogram_canvas = sinogram_canvas = FigureCanvasTkAgg(
             fig, master=self.sinogram_canvas_container)
         sinogram_canvas .get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
 
         self.recon_canvas_container = self.builder.get_object('recon_canvas')
-        self.recon_figure = fig = Figure(figsize=(3, 3), dpi=100)
+        self.recon_figure = fig = Figure(figsize=(3, 3), dpi=100,facecolor='black')
         self.recon_canvas = recon_canvas = FigureCanvasTkAgg(
             fig, master=self.recon_canvas_container)
         recon_canvas .get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
@@ -61,9 +70,9 @@ class App(pygubu.TkApplication):
     def add_file(self):
         filename = filedialog.askopenfilename(
             initialdir="/", title="Select file", filetypes=(("jpeg files", "*.jpg"), ("all files", "*.*")))
-        self.image = cv2.imread(filename,0)
-        axim = self.image_figure.add_axes([0,0,1,1], anchor='SW')
-        axim.imshow(self.image, aspect='auto',cmap='gray')
+        self.image = cv2.imread(filename, 0)
+        axim = self.image_figure.add_axes([0, 0, 1, 1], anchor='SW')
+        axim.imshow(self.image, aspect='auto', cmap='gray')
         axim.axis('off')
         self.image_canvas.draw()
         pass
@@ -74,17 +83,51 @@ class App(pygubu.TkApplication):
         pass
 
     def generate_sinogram(self):
-        self.sinogram = self.radon.radon_transform(self.image)
-        axim = self.sinogram_figure.add_axes([0,0,1,1], anchor='SW')
-        axim.imshow(self.sinogram, aspect='auto',cmap='gray')
+        self.sinogram = np.zeros((int(360/self.alpha), self.emmiters_count))
+        axim = self.sinogram_figure.add_axes([0, 0, 1, 1], anchor='SW')
+        self.sin_thread = Thread(target=lambda: self.sinogram_thread())
+        self.sin_thread.start()
+        # self.update_sinogram(axim)
+        time.sleep(10)
+        axim.imshow(self.sinogram, aspect='auto',  extent=(20, 80, 0, 100), cmap='gray')
         axim.axis('off')
         self.sinogram_canvas.draw()
         pass
 
+    def sinogram_thread(self):
+        self.radon.radon_transform(
+            image=self.image, sinogram=self.sinogram, alpha=self.alpha, theta=self.span, emmiters_count=self.emmiters_count)
+    pass
+
+    def update_sinogram(self,axim):
+        while self.sin_thread.is_alive() is True:
+            time.sleep(1)
+            axim.imshow(self.sinogram, aspect='auto', cmap='gray')
+            axim.axis('off')
+            self.sinogram_canvas.draw()
+
+    def reconstruction_thread(self):
+        self.radon.inverse_radon_transform(
+            recon = self.recon, sinogram=self.sinogram, alpha=self.alpha, theta=self.span, emmiters_count=self.emmiters_count)
+    pass
+
+    def update_recon(self,axim):
+        while self.recon_thread.is_alive() is True:
+            time.sleep(1)
+            axim.imshow(self.recon, aspect='auto', cmap='gray')
+            axim.axis('off')
+            self.recon_canvas.draw()
+
     def generate_recon(self):
-        self.recon = self.radon.inverse_radon_transform(self.sinogram)
-        axim = self.recon_figure.add_axes([0,0,1,1], anchor='SW')
-        axim.imshow(self.recon, aspect='auto',cmap='gray')
+        row, col = self.image.shape
+        self.recon = np.zeros((row,col))
+        axim = self.recon_figure.add_axes([0, 0, 1, 1], anchor='SW')
+        self.recon_thread = Thread(target=lambda: self.reconstruction_thread())
+        self.recon_thread.start()
+        
+        # self.update_recon(axim)
+        time.sleep(10)
+        axim.imshow(self.recon, aspect='auto', cmap='gray')
         axim.axis('off')
         self.recon_canvas.draw()
         pass
