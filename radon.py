@@ -39,15 +39,11 @@ class Radon:
             E = [row//2 + int(r * cos(angle)), col//2 + int(r*sin(angle))]
             D = []
             for i in range(emmiters_count):
-                if i == 0:
-                    x = r*cos(angle + pi - theta/2)
-                    y = r*sin(angle + pi - theta/2)
-                else:
-                    x = r*cos(angle + pi - theta/2 + i *
-                              theta/(emmiters_count-1))
-                    y = r*sin(angle + pi - theta/2 + i *
-                              theta/(emmiters_count-1))
-                D.append([row//2 + int(x), col//2 + int(y)])
+                x = r*cos(angle + pi - theta/2 + i *
+                          theta/(emmiters_count-1))
+                y = r*sin(angle + pi - theta/2 + i *
+                          theta/(emmiters_count-1))
+                D.append([row//2 + int(x), col//2+ int(y)])
             res = []
             for d in D:
                 values = self.bresenham_line(
@@ -95,11 +91,11 @@ class Radon:
                 else:
                     d += bi
                     x += xi
-            if inverse is False:
-                coords.append(
-                    self.pixel_value_if_exist(x, y))
-            else:
-                self.add_to_pixel_if_exist(x, y, value)
+                if inverse is False:
+                    coords.append(
+                        self.pixel_value_if_exist(x, y))
+                else:
+                    self.add_to_pixel_if_exist(x, y, value)
 
         else:
 
@@ -152,18 +148,14 @@ class Radon:
         angle = 0
         iterator = 0
         while angle < 2*pi:
-           
+
             E = [row//2 + int(r * cos(angle)), col//2 + int(r*sin(angle))]
             D = []
             for i in range(emmiters_count):
-                if i == 0:
-                    x = r*cos(angle + pi - theta/2)
-                    y = r*sin(angle + pi - theta/2)
-                else:
-                    x = r*cos(angle + pi - theta/2 + i *
-                                theta/(emmiters_count-1))
-                    y = r*sin(angle + pi - theta/2 + i *
-                              theta/(emmiters_count-1))
+                x = r*cos(angle + pi - theta/2 + i *
+                          theta/(emmiters_count-1))
+                y = r*sin(angle + pi - theta/2 + i *
+                          theta/(emmiters_count-1))
                 D.append([row//2 + int(x), col//2 + int(y)])
             try:
                 for d in D:
@@ -171,7 +163,7 @@ class Radon:
                         E[0], E[1], d[0], d[1], True, sinogram[iterator, D.index(d)])
                 iterator += 1
             except:
-                iterator +=0
+                iterator += 0
             angle += alpha
 
     pass
