@@ -43,7 +43,7 @@ class Radon:
                           theta/(emmiters_count-1))
                 y = r*sin(angle + pi - theta/2 + i *
                           theta/(emmiters_count-1))
-                D.append([row//2 + int(x), col//2+ int(y)])
+                D.append([row//2 + int(x), col//2 + int(y)])
             res = []
             for d in D:
                 values = self.bresenham_line(
@@ -124,7 +124,7 @@ class Radon:
 
     def pixel_value_if_exist(self, x, y):
         try:
-            if x >=0 and y >=0:
+            if x >= 0 and y >= 0:
                 res = self.image[x, y]
             else:
                 res = 0
@@ -134,7 +134,7 @@ class Radon:
 
     def add_to_pixel_if_exist(self, x, y, value):
         try:
-            if x < self.image.shape[0] and y < self.image.shape[1] and x >=0 and y >=0:
+            if x < self.image.shape[0] and y < self.image.shape[1] and x >= 0 and y >= 0:
                 self.recon[x, y] += value
         except:
             pass
@@ -171,5 +171,8 @@ class Radon:
                 iterator += 0
             preious_recons.append(recon.copy())
             angle += alpha
-
+        # max_val = np.max(recon)
+        # with np.nditer(self.recon, op_flags=['readwrite']) as it:
+        #     for x in it:
+        #         recon[...] = x/max_val * 255
     pass
