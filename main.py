@@ -238,8 +238,13 @@ class App(pygubu.TkApplication):
         ds = FileDataset(filename_little_endian, {},
                          file_meta=file_meta, preamble=b"\0" * 128)
 
-        ds.PatientName = "Test^Firstname"
-        ds.PatientID = "123456"
+        ds.PatientName = self.get_patient_name() + " " + self.get_patient_surname()
+        ds.PatientID = self.get_patient_id()
+        ds.PatientSex = self.get_patient_sex()
+        ds.PatientAge = self.get_patient_age()
+        ds.PatientWeight = self.get_patient_weight()
+        ds.ImageComment = self.get_patient_comment()
+        ds.PatientBirthDate = self.get_patient_birth()
 
         # Set the transfer syntax
         ds.is_little_endian = True
@@ -287,6 +292,11 @@ class App(pygubu.TkApplication):
             return
 
         ds = pydicom.read_file(file_name.name)
+        print(ds.PatientName)
+        print(ds.PatientAge)
+        print(ds.PatientBirthDate)
+        print(ds.PatientWeight)
+        print(ds.PatientSex)
         axim = self.dicom_figure.add_axes([0, 0, 1, 1], anchor='SW')
         axim.imshow(ds.pixel_array, aspect='auto', cmap='gray')
         axim.axis('off')
