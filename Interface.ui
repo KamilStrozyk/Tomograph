@@ -234,8 +234,7 @@
         <child>
           <object id="dicom_tab" class="ttk.Notebook.Tab">
             <property name="state">normal</property>
-            <property name="text" translatable="yes">Dicom
-</property>
+            <property name="text" translatable="yes">Dicom</property>
             <child>
               <object id="dicom_frame" class="ttk.Frame">
                 <property name="height">200</property>
@@ -248,7 +247,7 @@
                 <child>
                   <object id="id_label" class="ttk.Label">
                     <property name="compound">top</property>
-                    <property name="text" translatable="yes">Id</property>
+                    <property name="text" translatable="yes">Patient Id</property>
                     <layout>
                       <property name="column">0</property>
                       <property name="propagate">True</property>
@@ -270,7 +269,7 @@
                 </child>
                 <child>
                   <object id="name_label" class="ttk.Label">
-                    <property name="text" translatable="yes">Name</property>
+                    <property name="text" translatable="yes">Patient Name</property>
                     <layout>
                       <property name="column">0</property>
                       <property name="propagate">True</property>
@@ -279,9 +278,10 @@
                     </layout>
                   </object>
                 </child>
-                <child>
+                 <child>
                   <object id="name_entry" class="ttk.Entry">
-                    <property name="font">TkDefaultFont</property>
+                    <property name="exportselection">true</property>
+                    <property name="justify">left</property>
                     <layout>
                       <property name="column">0</property>
                       <property name="propagate">True</property>
@@ -291,7 +291,7 @@
                 </child>
                 <child>
                   <object id="surname_label" class="ttk.Label">
-                    <property name="text" translatable="yes">Surname</property>
+                    <property name="text" translatable="yes">Patient Surname</property>
                     <layout>
                       <property name="column">0</property>
                       <property name="propagate">True</property>
@@ -300,10 +300,10 @@
                     </layout>
                   </object>
                 </child>
-                <child>
+                 <child>
                   <object id="surname_entry" class="ttk.Entry">
-                    <property name="cursor">arrow</property>
-                    <property name="show">•</property>
+                    <property name="exportselection">true</property>
+                    <property name="justify">left</property>
                     <layout>
                       <property name="column">0</property>
                       <property name="propagate">True</property>
@@ -312,12 +312,158 @@
                   </object>
                 </child>
                 <child>
-                  <object id="Label_7" class="ttk.Label">
-                    <property name="text" translatable="yes">Label_7</property>
+                  <object id="sex_label" class="ttk.Label">
+                    <property name="text" translatable="yes">Patient Sex</property>
                     <layout>
                       <property name="column">0</property>
                       <property name="propagate">True</property>
                       <property name="row">6</property>
+                      <property name="sticky">w</property>
+                    </layout>
+                  </object>
+                </child>
+                 <child>
+                  <object id="sex_entry" class="ttk.Entry">
+                    <property name="exportselection">true</property>
+                    <property name="justify">left</property>
+                    <layout>
+                      <property name="column">0</property>
+                      <property name="propagate">True</property>
+                      <property name="row">7</property>
+                    </layout>
+                  </object>
+                </child>
+                <child>
+                  <object id="age_label" class="ttk.Label">
+                    <property name="text" translatable="yes">Patient Age</property>
+                    <layout>
+                      <property name="column">0</property>
+                      <property name="propagate">True</property>
+                      <property name="row">8</property>
+                      <property name="sticky">w</property>
+                    </layout>
+                  </object>
+                </child>
+                 <child>
+                  <object id="age_entry" class="ttk.Entry">
+                    <property name="exportselection">true</property>
+                    <property name="justify">left</property>
+                    <layout>
+                      <property name="column">0</property>
+                      <property name="propagate">True</property>
+                      <property name="row">9</property>
+                    </layout>
+                  </object>
+                </child>
+                <child>
+                  <object id="weight_label" class="ttk.Label">
+                    <property name="text" translatable="yes">Patient Weight</property>
+                    <layout>
+                      <property name="column">0</property>
+                      <property name="propagate">True</property>
+                      <property name="row">10</property>
+                      <property name="sticky">w</property>
+                    </layout>
+                  </object>
+                </child>
+                 <child>
+                  <object id="weight_entry" class="ttk.Entry">
+                    <property name="exportselection">true</property>
+                    <property name="justify">left</property>
+                    <layout>
+                      <property name="column">0</property>
+                      <property name="propagate">True</property>
+                      <property name="row">11</property>
+                    </layout>
+                  </object>
+                </child>
+                <child>
+                  <object id="comment_label" class="ttk.Label">
+                    <property name="text" translatable="yes">Image Comments</property>
+                    <layout>
+                      <property name="column">0</property>
+                      <property name="propagate">True</property>
+                      <property name="row">12</property>
+                      <property name="sticky">w</property>
+                    </layout>
+                  </object>
+                </child>
+                 <child>
+                  <object id="comment_entry" class="ttk.Entry">
+                    <property name="exportselection">true</property>
+                    <property name="justify">left</property>
+                    <layout>
+                      <property name="column">0</property>
+                      <property name="propagate">True</property>
+                      <property name="row">13</property>
+                    </layout>
+                  </object>
+                </child>
+                <child>
+                  <object id="birth_label" class="ttk.Label">
+                    <property name="text" translatable="yes">Birth Date</property>
+                    <layout>
+                      <property name="column">0</property>
+                      <property name="propagate">True</property>
+                      <property name="row">14</property>
+                      <property name="sticky">w</property>
+                    </layout>
+                  </object>
+                </child>
+               <child>
+                <object id="birth_entry" class="ttk.Entry">
+                  <property name="exportselection">true</property>
+                  <property name="justify">left</property>
+                  <layout>
+                    <property name="column">0</property>
+                    <property name="propagate">True</property>
+                    <property name="row">15</property>
+                  </layout>
+                </object>
+              </child>
+                <child>
+                  <object id="save_dicom_button" class="ttk.Button">
+                    <property name="command">save_dicom</property>
+                    <property name="state">normal</property>
+                    <property name="takefocus">false</property>
+                    <property name="text" translatable="yes">Save DICOM File</property>
+                    <layout>
+                      <property name="column">0</property>
+                      <property name="ipadx">42</property>
+                      <property name="propagate">True</property>
+                      <property name="row">16</property>
+                      <property name="sticky">w</property>
+                    </layout>
+                  </object>
+                </child>
+                <child>
+                  <object id="read_dicom_button" class="ttk.Button">
+                    <property name="command">read_dicom</property>
+                    <property name="state">normal</property>
+                    <property name="takefocus">false</property>
+                    <property name="text" translatable="yes">Read DICOM File</property>
+                    <layout>
+                      <property name="column">0</property>
+                      <property name="ipadx">42</property>
+                      <property name="propagate">True</property>
+                      <property name="row">18</property>
+                      <property name="sticky">w</property>
+                    </layout>
+                  </object>
+                </child>
+                <child>
+                  <object id="dicom_canvas" class="tk.Canvas">
+                    <property name="background">black</property>
+                    <property name="height">250</property>
+                    <property name="relief">flat</property>
+                    <property name="width">250</property>
+                    <layout>
+                      <property name="pady">100</property>
+                      <property name="propagate">True</property>
+                      <property name="column">2</property>
+                      <property name="row">0</property>
+                      <property name="rowspan">17</property>
+                      <property name="sticky">n</property>
                     </layout>
                   </object>
                 </child>

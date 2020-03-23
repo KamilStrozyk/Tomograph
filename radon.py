@@ -15,12 +15,15 @@ import pygubu
 from PIL import ImageTk, Image
 import os
 import cv2
+from skimage.filters import gaussian, sobel
+from skimage import morphology
 import numpy as np
 from math import *
 
 
 class Radon:
     def __init__(self):
+        self.iteration = 0
         pass
 
     def radon_transform(self, image: np.ndarray, sinogram: np.ndarray, alpha, emmiters_count, theta, previous_sinograms):
@@ -169,7 +172,54 @@ class Radon:
                 iterator += 1
             except:
                 iterator += 0
-            preious_recons.append(recon.copy())
+
+            input_image = np.array(self.image)
+            transformed = recon.copy()
+            MSE = np.square(np.subtract(input_image, transformed)).mean()
+            print(str(self.iteration) + ' : ' + str(MSE))
+            self.iteration = self.iteration + 1
+            preious_recons.append(transformed)
+            angle += alpha
+
+    pass
+
+    def inverse_radon_transform_with_filter(self, recon: np.ndarray, sinogram: np.ndarray, alpha, emmiters_count, theta, preious_recons):
+        self.recon = recon
+        image = self.image
+        alpha = (alpha * 2 * pi / 360)
+        theta = (theta * 2 * pi / 360)
+        row, col = image.shape
+        center = {"x": row//2, "y": col//2}
+        corner = {"x": row, "y": col}
+        r = sqrt((center["x"] - corner["x"])**2 +
+                 (center["y"] - corner["y"])**2)
+        angle = 0
+        iterator = 0
+        while angle < 2*pi:
+
+            E = [row//2 + int(r * cos(angle)), col//2 + int(r*sin(angle))]
+            D = []
+            for i in range(emmiters_count):
+                x = r*cos(angle + pi - theta/2 + i *
+                          theta/(emmiters_count-1))
+                y = r*sin(angle + pi - theta/2 + i *
+                          theta/(emmiters_count-1))
+                D.append([row//2 + int(x), col//2 + int(y)])
+            try:
+                for d in D:
+                    values = self.bresenham_line(
+                        E[0], E[1], d[0], d[1], True, sinogram[iterator, D.index(d)])
+                iterator += 1
+            except:
+                iterator += 0
+
+            imagematrix = recon.copy()
+            input_image = np.array(self.image)
+            transformed = gaussian(imagematrix)
+            MSE = np.square(np.subtract(input_image, transformed)).mean()
+            print(str(self.iteration) + ' : ' + str(MSE))
+            self.iteration = self.iteration + 1
+            preious_recons.append(transformed)
             angle += alpha
         # max_val = np.max(recon)
         # with np.nditer(self.recon, op_flags=['readwrite']) as it:
