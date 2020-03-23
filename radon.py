@@ -181,6 +181,11 @@ class Radon:
             preious_recons.append(transformed)
             angle += alpha
 
+        max_val = np.max(recon)
+        min_val = np.min(recon)
+        for x in range(row):
+            for y in range(col):
+                self.recon[x,y]= (self.recon[x,y] - min_val)/(max_val - min_val)
     pass
 
     def inverse_radon_transform_with_filter(self, recon: np.ndarray, sinogram: np.ndarray, alpha, emmiters_count, theta, preious_recons):
@@ -221,8 +226,10 @@ class Radon:
             self.iteration = self.iteration + 1
             preious_recons.append(transformed)
             angle += alpha
-        # max_val = np.max(recon)
-        # with np.nditer(self.recon, op_flags=['readwrite']) as it:
-        #     for x in it:
-        #         recon[...] = x/max_val * 255
+ # normalization
+        max_val = np.max(recon)
+        min_val = np.min(recon)
+        for x in range(row):
+            for y in range(col):
+                self.recon[x,y]= (self.recon[x,y] - min_val)/(max_val - min_val)
     pass
