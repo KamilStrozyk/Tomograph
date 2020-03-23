@@ -214,29 +214,8 @@ class Radon:
                 iterator += 0
 
             imagematrix = recon.copy()
-            transformed = morphology.dilation(imagematrix, morphology.disk(10))
-            transformed = morphology.erosion(transformed, morphology.square(6))
-            m = 0
-            i = 0
-            for l in transformed:
-                j = 0
-                for x in l:
-                    if x > m: m = x
-                    j = j + 1
-                i = i + 1
-            i = 0
-            for l in transformed:
-                j = 0
-                for x in l:
-                    if x > (0.55 * m):
-                        transformed[i, j] = 0
-                    else:
-                        transformed[i, j] = 1
-                    j = j + 1
-                i = i + 1
-
             input_image = np.array(self.image)
-            transformed = gaussian(transformed)
+            transformed = gaussian(imagematrix)
             MSE = np.square(np.subtract(input_image, transformed)).mean()
             print(str(self.iteration) + ' : ' + str(MSE))
             self.iteration = self.iteration + 1
