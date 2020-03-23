@@ -41,11 +41,6 @@ def addFile(self):
 
 class App(pygubu.TkApplication):
     def __init__(self):
-        self.file_meta = Dataset()
-        self.file_meta.MediaStorageSOPClassUID = '1.2.840.10008.5.1.4.1.1.2'
-        self.file_meta.MediaStorageSOPInstanceUID = "1.2.3"
-        self.file_meta.ImplementationClassUID = "1.2.3.4"
-        self.ds = None
         self.radon = radon.Radon()
         self.builder = builder = pygubu.Builder()
         self.running = False
@@ -54,6 +49,10 @@ class App(pygubu.TkApplication):
         builder.add_from_file('Interface.ui')
 
         self.window = builder.get_object('main_window')
+        root = builder.get_object('main_frame')
+        self.checkboxVar = IntVar()
+        checkbutton = Checkbutton(root, text="Filter", variable=self.checkboxVar).grid(row=7, column=1)
+
         self.window.title("Tomograph")
         self.window.geometry('700x740')
         self._create_ui()
@@ -145,6 +144,11 @@ class App(pygubu.TkApplication):
             recon=self.recon, sinogram=self.sinogram, alpha=self.alpha, theta=self.span, emmiters_count=self.emmiters_count, preious_recons=self.previous_recons)
     pass
 
+    def reconstruction_thread_with_filter(self):
+        self.radon.inverse_radon_transform_with_filter(
+            recon=self.recon, sinogram=self.sinogram, alpha=self.alpha, theta=self.span, emmiters_count=self.emmiters_count, preious_recons=self.previous_recons)
+    pass
+
     def update_recon(self, axim):
         if self.recon_thread.is_alive() is True:
             axim.imshow(self.recon, aspect='auto', cmap='gray')
@@ -157,7 +161,11 @@ class App(pygubu.TkApplication):
         self.recon = np.zeros((row, col))
         self.recon_axim = axim = self.recon_figure.add_axes(
             [0, 0, 1, 1], anchor='SW')
-        self.recon_thread = Thread(target=lambda: self.reconstruction_thread())
+
+        if self.checkboxVar.get() == 0:
+            self.recon_thread = Thread(target=lambda: self.reconstruction_thread())
+        else:
+            self.recon_thread = Thread(target=lambda: self.reconstruction_thread_with_filter())
         self.recon_thread.start()
 
         self.update_recon(axim)
@@ -197,7 +205,7 @@ class App(pygubu.TkApplication):
         }
         self.builder.connect_callbacks(callbacks)
 
-    # DIOM
+# DICOM
     def get_patient_name(self):
         return self.builder.get_object('name_entry').get()
 
